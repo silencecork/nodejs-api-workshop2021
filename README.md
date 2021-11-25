@@ -1,21 +1,33 @@
+# 呼叫API
+
 ## 為何需要API
 
 - 目前網站、APP非常盛行，這些前端的介面如何取得資料，並且將資料呈現出來，就是一個資訊技術上的問題
 - 首先，資料的來源最為大家所熟知的就是資料庫了
 - 那麼APP或網站要呈現資料，就是直接連線到資料庫取得資料嗎？
 - 不行，會有很多問題，例如資料庫可能會無法負荷連線量、有可能會有資訊安全的問題
+
+![直接連資料庫是有危險的](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/no_api.png?raw=true)
+
 - 另外，如果我想取得的資料，我沒辦法連線到那個資料庫，那怎麼辦？
 - 所以API是一個機制，讓APP、網站可以藉由API去取得資料，再由API去資料庫取得資料，那麼APP或網站就不需要知道資料庫連線的帳號密碼，一樣可以取得資料了
 
+![使用API取得資料](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/api.png?raw=true)
+
 ## API概述
 
+![url的組成(資料出處：https://www.welcometothejungle.com/en/articles/btc-url-internet)](https://cdn.welcometothejungle.co/uploads/image/file/6023/159368/68dca0f2-7683-4ba9-a87a-3a7fdbe8015e.png)
+
 - API基本上就是一個網址
+  
   - 例如[http://example.com.tw/sample](http://example.com.tw/sample)，或是我們最常使用到的，自己的電腦，[http://localhost/]()
   - 有時候也會使用IP位置，例如[http://127.0.0.1/](http://127.0.0.1/)
-  - 上述例子，**http://**表示協定，**example.com.tw**、**localhost**、**127.0.0.1**代表主機，**/sample**、**/**代表path
+    - 上述例子，**http://**表示協定(Sheme)
+    - **example.com.tw**、**localhost**、**127.0.0.1**代表主機
+  - **/sample**、**/**代表path
+    - 也時常會在主機後面再接一個PORT號，格式就是http://主機**:8080**/，**:8080**就是PORT號
   - API都是使用**http://**或**https://**的協定
-  - API也時常會在主機後面再接一個PORT號，格式就是http://主機**:8080**/，**:8080**就是PORT號
-
+  
 - 而網址我們會帶著一些資訊，來告訴這網址我們需要索取的內容，例如：[https://www.google.com/search?q=node.js](https://www.google.com/search?q=node.js)
   - 上述例子，網址後面的q=node.js，這種將資訊直接帶在網址上的方式，稱為GET，資訊藉由**q=**來帶給API
   - 另一種常用的方式叫做POST，他是將資訊帶在傳輸的資料中，而不是網址上
@@ -66,7 +78,11 @@
   - [Hoppscotch](https://hoppscotch.io/)：可直接在網頁上測試API
   - [Postman](https://www.postman.com/downloads/)：需要下載App，但我自己比較常使用這個
 
-- 本次範例都先使用Hoppscotch來做說明，打開該網站，在畫面中會看到一個輸入框，直接輸入API [https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de](https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de)，並且按下「Send」，就可以看到回傳的資料了
+- 本次範例都先使用Hoppscotch來做說明
+
+  ![Hoppscotch](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/use_hoppscotch.png?raw=true)
+  
+- 打開該網站，在畫面中會看到一個輸入框，直接輸入API [https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de](https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de)，並且按下「Send」，就可以看到回傳的資料了
 
   ```json
   [
@@ -107,6 +123,8 @@
 - 首先打開檔案總管，在「文件」的資料夾下建立一個叫做workshop的資料夾
 
 - 對該資料夾按下滑鼠右鍵，選擇「以Code開啟」。如果你按下滑鼠右鍵沒有這個選單，就直接打開VS Code，在VS Code上方「檔案」->「開啟資料夾」，然後選擇剛剛在文件下建立的workshop資料夾
+
+  ![打開VSCode](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/import_to_vscode.png?raw=true)
 
 - 要建立Node.js的應用程式，首先需要一個Javascript檔案，所以在剛剛開啟的VS Code專案下，選擇上方「檔案」-> 「新增檔案」，這時候畫面就會出現一個新的檔案名叫Untitled-1
 
@@ -176,6 +194,8 @@
 
 - 在VS Code上方選單，「終端機」->「新增終端」，預設就會在VS Code最下方出現指令模式
 
+  ![打開終端機](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/open_terminal.png?raw=true)
+
 - 這邊要說明Node.js最常使用到的指令之一，**```node <javascript的檔案>```**，本範例執行的例子如下：
   ```bash
   node index.js
@@ -217,4 +237,97 @@
 
 - 上述指令執行完畢後，再次執行**node index.js**，就會看到API回傳的資料了，雖然很亂難以閱讀...
 
-- 
+### 第四步、處理資料
+
+- 現在來處理回傳的資料，從回呼函式回傳的```body```是字串，我們必須先將他轉為JSON格式的資料才能在Node.js中使用
+
+- 以下是處理資料的完整程式碼
+
+  ```javascript
+  const request = require('request');
+  
+  var options = {
+    'method': 'GET',
+    'url': 'https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de'
+  };
+  request(options, function (err, response, body) {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    let data = JSON.parse(body);
+    console.log(Array.isArray(data));
+    data.forEach(function (item) {
+      console.log(item.sna + " " + item.sbi);
+    });
+  });
+  ```
+
+- 程式碼說明
+
+  - 使用```JSON.parse(字串)```，只要字串符合JSON格式的規定，就可以將字串轉為JSON物件，並存在變數```data```中
+
+    ```javascript
+    let data = JSON.parse(body);
+    ```
+
+  - 如果我們看看API回傳的資料，可以用```Array.isArray(變數)```檢查資料是不是陣列，如果我們去執行程式碼，就會發現變數data目前是陣列
+
+    ```javascript
+    console.log(Array.isArray(data));
+    ```
+
+  - ```陣列變數.foreach(function (陣列中一個一個的物件) {...})```：這是Javascript中常見的迴圈使用方式
+
+    ```javascript
+    data.forEach(function (item) {
+      ...
+    });
+    ```
+
+    - 也可以用傳統的for迴圈尋訪陣列
+
+      ```javascript
+      for (i = 0; i < data.length; i++) {
+        let item = data[i];
+      }
+      ```
+
+  - 我們在前面有檢查過API回傳的資料，其中sna(場站中文名稱)、sbi(場站目前車輛數量)是很有用的資訊，我們可以把資訊列印在畫面上
+
+    ```javascript
+    data.forEach(function (item) {
+      console.log(item.sna + " " + item.sbi);
+    });
+    ```
+
+- 接下來，使用```node index.js```再次執行程式，就會得到以下結果
+
+  ```bash
+  YouBike2.0_捷運科技大樓站 0
+  YouBike2.0_復興南路二段273號前 0
+  YouBike2.0_國北教大實小東側門 0
+  YouBike2.0_和平公園東側 0
+  YouBike2.0_辛亥復興路口西北側 1
+  YouBike2.0_復興南路二段280號前 0
+  YouBike2.0_復興南路二段340巷口 0
+  YouBike2.0_新生南路三段52號前 0
+  YouBike2.0_新生南路三段66號前 0
+  YouBike2.0_新生南路三段82號前 0
+  YouBike2.0_羅斯福路三段333巷9號旁 0
+  YouBike2.0_辛亥路一段30號前 0
+  YouBike2.0_和平復興路口西北側 0
+  YouBike2.0_羅斯福路三段311號前 0
+  YouBike2.0_大安運動中心停車場 1
+  ...
+  ```
+
+### 挑戰一下
+
+- 只印出目前場站車輛數大於5台的場站要怎麼做？
+
+### 補充資料
+
+- 其他關於Javascript操作物件和陣列的教學，[見此](https://miahsuwork.medium.com/%E7%AC%AC%E5%9B%9B%E9%80%B1-javascript-%E9%99%A3%E5%88%97-array-%E8%88%87-%E7%89%A9%E4%BB%B6-object-25f13e3d3c92)
+- request是使用在Node.js之上的，如果你在寫網頁程式，就沒辦法使用了。但也有對應的套件可以使用，例如[fetch](https://developer.mozilla.org/zh-TW/docs/Web/API/Fetch_API/Using_Fetch)
+
