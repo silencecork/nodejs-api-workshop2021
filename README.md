@@ -565,7 +565,7 @@
 
 ## 建立可以接收參數的GET API
 
-- 我們另外建立一個路徑/param，來做為可以接收參數的API
+- 我們另外建立一個路徑/param，來做為可以接收參數的API，如果忘記參數是什麼，可以回頭看[API概述](#api%E6%A6%82%E8%BF%B0)
 - 呼叫API時會長得像這樣[http://localhost:8080/param?key1=Hello&key2=World](http://localhost:8080/param?key1=Hello&key2=World)
   - API接收兩個Key，分別是key1和key2
 
@@ -634,7 +634,7 @@
 
   ![範例圖示](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/call_api_flow.jpg?raw=true)
 
-- API預定樣式[http://localhost:8080/ubike?bike_num=3](http://localhost:8080/ubike?bike_num=3)
+- API預定樣式[http://localhost:8000/ubike?bike_num=3](http://localhost:8000/ubike?bike_num=3)
 
   - 路徑：/ubike
   - 參數：bike_num
