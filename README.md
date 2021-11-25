@@ -89,7 +89,7 @@
 ## 呼叫API
 
 - 我們這裡使用Node.js，搭配[YouBike的及時自行車資訊](https://data.gov.tw/dataset/137993)的資料集為例子
-- 從網站中我們可以得到API的位置為[https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de](https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de)
+- 從網站中我們可以得到API的位置為https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json
 - 開發工具我們使用VS Code為基礎
 
 ### 推薦API測試工具
@@ -103,7 +103,7 @@
 
   ![Hoppscotch](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/use_hoppscotch.png?raw=true)
   
-- 打開該網站，在畫面中會看到一個輸入框，直接輸入API [https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de](https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de)，並且按下「Send」，就可以看到回傳的資料了
+- 打開該網站，在畫面中會看到一個輸入框，直接輸入API [https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json](https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json)，並且按下「Send」，就可以看到回傳的資料了
 
   ```json
   [
@@ -160,7 +160,7 @@
 
   var options = {
     method: 'GET',
-    url: 'https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de'
+    url: 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json'
   };
   request(options, function (err, response, body) {
     if (err) {
@@ -182,7 +182,7 @@
   ```javascript
   var options = {
     method: 'GET',
-    url: 'https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de'
+    url: 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json'
   };
   ```
   - 使用在第一行宣告使用的套件request，傳送2個參數
@@ -287,13 +287,21 @@
   Is this OK? (yes) yes
   ```
 
+- 上述指令執行完畢後，在workshop資料夾下會出現一個package.json檔，這個檔案非常重要，會記錄這個專案有使用到的所有套件
+
 - 接下來才可以安裝套件，使用Node.js最常用到的指令之三，**```npm install --save <套件名稱>```**，本範例要在指令模式下輸入以下指令，並按下Enter執行：
 
   ```bash
   npm install --save request
   ```
 
-- 上述指令執行完畢後，再次執行**node index.js**，就會看到API回傳的資料了，雖然很亂難以閱讀...
+- 上述指令執行完畢後，會將這個專案要使用request套件的資訊寫到package.json中。未來如果分享專案給其他開發者，其他的開發者只要在資料夾目錄下輸入以下指令，就可以自動把這個專案要使用的套件一次裝回來
+
+  ```bash
+  npm install
+  ```
+
+- 再次執行**node index.js**，就會看到API回傳的資料了，雖然很亂難以閱讀...
 
 ### 第四步、處理資料
 
@@ -306,7 +314,7 @@
   
   var options = {
     'method': 'GET',
-    'url': 'https://quality.data.gov.tw/dq_download_json.php?nid=137993&md5_url=86ec099baa2d36c22ab3a87350b718de'
+    'url': 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json'
   };
   request(options, function (err, response, body) {
     if (err) {
