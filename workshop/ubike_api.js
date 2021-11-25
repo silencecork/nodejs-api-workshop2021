@@ -38,7 +38,3 @@ app.listen(8000, function (err) {
         console.error(err);
     }
 });
-
-function findMatchBikeStation() {
-    
-}
