@@ -1,8 +1,8 @@
 const request = require('request');
 
 var options = {
-  'method': 'GET',
-  'url': 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json'
+  method: 'GET',
+  url: 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json'
 };
 request(options, function (err, response, body) {
   if (err) {
