@@ -1,3 +1,24 @@
+- [呼叫API](#%E5%91%BC%E5%8F%ABapi)
+  - [為何需要API](#%E7%82%BA%E4%BD%95%E9%9C%80%E8%A6%81api)
+  - [API概述](#api%E6%A6%82%E8%BF%B0)
+  - [內容大綱](#%E5%85%A7%E5%AE%B9%E5%A4%A7%E7%B6%B1)
+  - [呼叫API](#%E5%91%BC%E5%8F%ABapi-1)
+    - [推薦API測試工具](#%E6%8E%A8%E8%96%A6api%E6%B8%AC%E8%A9%A6%E5%B7%A5%E5%85%B7)
+    - [第一步、建立應用程式檔案](#%E7%AC%AC%E4%B8%80%E6%AD%A5%E5%BB%BA%E7%AB%8B%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F%E6%AA%94%E6%A1%88)
+    - [第二步、輸入程式碼](#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E8%BC%B8%E5%85%A5%E7%A8%8B%E5%BC%8F%E7%A2%BC)
+    - [第三步、執行應用程式](#%E7%AC%AC%E4%B8%89%E6%AD%A5%E5%9F%B7%E8%A1%8C%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F)
+    - [第四步、處理資料](#%E7%AC%AC%E5%9B%9B%E6%AD%A5%E8%99%95%E7%90%86%E8%B3%87%E6%96%99)
+    - [挑戰一下](#%E6%8C%91%E6%88%B0%E4%B8%80%E4%B8%8B)
+    - [補充資料](#%E8%A3%9C%E5%85%85%E8%B3%87%E6%96%99)
+- [建立API](#%E5%BB%BA%E7%AB%8Bapi)
+  - [建立GET API](#%E5%BB%BA%E7%AB%8Bget-api)
+    - [第一步、撰寫程式碼](#%E7%AC%AC%E4%B8%80%E6%AD%A5%E6%92%B0%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%A2%BC)
+    - [第二步、測試API與CORS問題](#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E6%B8%AC%E8%A9%A6api%E8%88%87cors%E5%95%8F%E9%A1%8C)
+    - [第三步、再次測試API](#%E7%AC%AC%E4%B8%89%E6%AD%A5%E5%86%8D%E6%AC%A1%E6%B8%AC%E8%A9%A6api)
+  - [建立可以接收參數的GET API](#%E5%BB%BA%E7%AB%8B%E5%8F%AF%E4%BB%A5%E6%8E%A5%E6%94%B6%E5%8F%83%E6%95%B8%E7%9A%84get-api)
+    - [第一步、撰寫程式碼](#%E7%AC%AC%E4%B8%80%E6%AD%A5%E6%92%B0%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%A2%BC-1)
+    - [第二步、測試API](#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E6%B8%AC%E8%A9%A6api)
+
 # 呼叫API
 
 ## 為何需要API
@@ -587,6 +608,6 @@
     let key2 = httpRequest.query.key2;
     ```
 
-## 第二步、測試API
+### 第二步、測試API
 
 - 打開[hoppscotch](https://hoppscotch.io/)，在網址列輸入[http://localhost:8080/param?key1=SHU&key2=Workshop](http://localhost:8080/param?key1=SHU&key2=Workshop)，並按下Send，就可以看到結果了
