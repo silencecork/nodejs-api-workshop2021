@@ -24,7 +24,7 @@
   - 有時候也會使用IP位置，例如[http://127.0.0.1/](http://127.0.0.1/)
     - 上述例子，**http://**表示協定(Sheme)
     - **example.com.tw**、**localhost**、**127.0.0.1**代表主機
-  - **/sample**、**/**代表path
+  - **/sample**、**/**代表路徑(path)
     - 也時常會在主機後面再接一個PORT號，格式就是http://主機**:8080**/，**:8080**就是PORT號
   - API都是使用**http://**或**https://**的協定
   
@@ -229,7 +229,44 @@
   }
   ```
   
-- 這邊要用到Node.js最常用到的指令之二，**```npm install --save <套件名稱>```**，本範例要在指令模式下輸入以下指令，並按下Enter執行：
+- 安裝套件之前，我們要先建立Node.js的專案，這邊使用到最常使用的指令之二，```npm init```，在指令模式下輸入這個指令
+
+  ```bash
+  npm init
+  ```
+
+- 會看到結果如下
+
+  ```bash
+  Press ^C at any time to quit.
+  package name: (workshop)
+  version: (1.0.0)
+  description:
+  entry point: (index.js)
+  test command:
+  git repository:
+  keywords:
+  author:
+  license: (ISC)
+  About to write to ...\workshop\package.json:
+  
+  {
+    "name": "workshop",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC"
+  }
+  
+  
+  Is this OK? (yes) yes
+  ```
+
+- 接下來才可以安裝套件，使用Node.js最常用到的指令之三，**```npm install --save <套件名稱>```**，本範例要在指令模式下輸入以下指令，並按下Enter執行：
 
   ```bash
   npm install --save request
@@ -329,5 +366,227 @@
 ### 補充資料
 
 - 其他關於Javascript操作物件和陣列的教學，[見此](https://miahsuwork.medium.com/%E7%AC%AC%E5%9B%9B%E9%80%B1-javascript-%E9%99%A3%E5%88%97-array-%E8%88%87-%E7%89%A9%E4%BB%B6-object-25f13e3d3c92)
+
 - request是使用在Node.js之上的，如果你在寫網頁程式，就沒辦法使用了。但也有對應的套件可以使用，例如[fetch](https://developer.mozilla.org/zh-TW/docs/Web/API/Fetch_API/Using_Fetch)
 
+- 使用request的POST的方式，以下是簡單的範例程式碼：
+
+  ```javascript
+  const request = require('request');
+  
+  let postData = {
+      key1: "value 1",
+      key2: "value 2"
+  }
+  request.post('API位置', form: postData, function (err, httpResponse, body) {
+      if (err) {
+          console.error(err);
+          return;
+      }
+      ...
+  });
+  ```
+
+  
+
+# 建立API
+
+- 我們也可以自己建立API伺服器
+- 這次我們使用到的套件叫做[express](https://expressjs.com/zh-tw/)
+
+## 建立GET API
+
+### 第一步、撰寫程式碼
+
+- 在目前的專案新增一個檔案，稱為server.js，程式碼如下：
+
+  ```javascript
+  const express = require('express');
+  const app = express();
+  
+  app.get('/', function (httpRequest, httpResponse) {
+      let data = {
+          message: "Hello World"
+      };
+      return httpResponse.json(data);
+  });
+  
+  app.listen(8080, function (err) {
+      if (err) {
+          console.error(err)
+      }
+  });
+  ```
+
+- 程式碼說明：
+
+  - 首先我們先引用套件express
+
+    ```javascript
+    const express = require('express');
+    ```
+
+  - 建立express實體
+
+    ```javascript
+    const app = express();
+    ```
+
+  - express的架構是讓我們以URL的Path做為不同的API入口，不同入口設定不同的接收器 (回呼函式)負責處理
+
+  - 格式為```app.<http方法>(路徑, 回呼函式)```，所以本範例就是建立了一個接收根路徑，接受GET的方式的接收器
+
+  - 回呼函式的資料有兩個參數，httpRequest包含著用戶來呼叫API時的資訊；httpResponse是負責將資料傳回給用戶使用的參數
+
+    ```javascript
+    app.get('/', function (httpRequest, httpResponse) {
+        ...
+    });
+    ```
+
+  - 再來看看接收器(回呼函式)的內容，藉由```httpResponse.json(資料)```，一律回傳JSON格式的資料。所以這裡會回傳的資料就是```{"message": "Hello World"}```
+
+    ```javascript
+    app.get('/', function (httpRequest, httpResponse) {
+        let data = {
+            message: "Hello World"
+        };
+        return httpResponse.json(data);
+    });
+    ```
+
+  - 再來看看讓API伺服器的啟動方式，```app.listen(Port號)```就可以啟動了。而範例中的寫法還加上了回呼函式，用來接收啟動是否成功。如果回呼函式的參數err有值，就表示啟動出現問題了
+
+    ```javascript
+    app.listen(8080, function (err) {
+        if (err) {
+            console.error(err)
+        }
+    });
+    ```
+
+- 接下來使用指令
+
+  - ```npm install --save express```：安裝express套件
+  - ```node server.js```：啟動伺服器
+
+### 第二步、測試API與CORS問題
+
+- 打開[hoppscotch](https://hoppscotch.io/)，在網址列輸入[http://127.0.0.1:8080/](http://127.0.0.1:8080/)，並按下Send
+
+- 出現錯誤了，Could not send request
+
+  ![CORS錯誤](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/hoppscotch_cors_error.png?raw=true)
+
+- 這是CORS的安全性問題，這裡有[詳細的說明](https://developer.mozilla.org/zh-TW/docs/Web/HTTP/CORS)，簡單來說，Hoppscotch是網頁應用程式，網頁應用程式不能夠隨便呼叫別人家的API，必須API特別允許才能呼叫，所以我們的API Server必須得解決這個問題
+
+- 打開server.js，程式碼更改如下
+
+  ```javascript
+  const express = require('express');
+  const app = express();
+  const cors = require('cors');
+  
+  app.use(cors());
+  
+  app.get('/', function (httpRequest, httpResponse) {
+      let data = {
+          message: "Hello World"
+      };
+      return httpResponse.json(data);
+  });
+  
+  app.listen(8080, function (err) {
+      if (err) {
+          console.error(err)
+      }
+  });
+  ```
+
+- 程式碼說明：
+
+  - 這邊引入了專門用來解決CORS問題的套件
+
+    ```javascript
+    const cors = require('cors');
+    ```
+
+  - 在express再加上這一行就可以解除CORS的問題了
+
+    ```javascript
+    app.use(cors());
+    ```
+
+- 接下來執行指令
+
+  - ```npm install --save cors```：使用npm安裝cors套件
+  - ```node index.js```：再次執行應用程式
+
+### 第三步、再次測試API
+
+- 再次使用[hoppscotch](https://hoppscotch.io/)，在網址列輸入[http://127.0.0.1:8080/](http://127.0.0.1:8080/)，並按下Send
+
+- 應該會看到下圖的畫面
+
+  ![越過CORS的安全性檢查](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/hoppscotch_cors_success.png?raw=true)
+
+## 建立可以接收參數的GET API
+
+- 我們另外建立一個路徑/param，來做為可以接收參數的API
+- 呼叫API時會長得像這樣[http://localhost:8080/param?key1=Hello&key2=World](http://localhost:8080/param?key1=Hello&key2=World)
+  - API接收兩個Key，分別是key1和key2
+
+### 第一步、撰寫程式碼
+
+- 以下是完整的程式碼：
+
+  ```javascript
+  const express = require('express');
+  const app = express();
+  const cors = require('cors');
+  
+  app.use(cors())
+  
+  app.get('/', function (httpRequest, httpResponse) {
+      let data = {
+          message: "Hello World"
+      };
+      return httpResponse.json(data);
+  });
+  
+  app.get('/param', function (httpRequest, httpResponse) {
+      let key1 = httpRequest.query.key1;
+      let key2 = httpRequest.query.key2;
+      let data = {
+          message: key1 + " " + key2
+      };
+      return httpResponse.json(data);
+  });
+  
+  app.listen(8080, function (err) {
+      if (err) {
+          console.error(err)
+      }
+  });
+  ```
+
+- 程式碼說明：
+
+  - 建立另一個路徑/param的接收器
+
+    ```javascript
+    app.get('/param', function (httpRequest, httpResponse) {
+        ...
+    });
+    ```
+
+  - 使用```httpReques.query.參數名```可以取得傳入的參數，本次例子參數是key1=Hello&key2=World，是兩個參數分別為key1和key2，所以就可以用以下的程式碼取得
+
+    ```javascript
+    let key1 = httpRequest.query.key1;
+    let key2 = httpRequest.query.key2;
+    ```
+
+## 第二步、測試API
+
+- 打開[hoppscotch](https://hoppscotch.io/)，在網址列輸入[http://localhost:8080/param?key1=SHU&key2=Workshop](http://localhost:8080/param?key1=SHU&key2=Workshop)，並按下Send，就可以看到結果了
