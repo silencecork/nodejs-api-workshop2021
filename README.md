@@ -7,12 +7,12 @@
 - 那麼APP或網站要呈現資料，就是直接連線到資料庫取得資料嗎？
 - 不行，會有很多問題，例如資料庫可能會無法負荷連線量、有可能會有資訊安全的問題
 
-![直接連資料庫是有危險的](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/no_api.png?raw=true)
+![直接連資料庫是有危險的](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/no_api.jpg?raw=true)
 
 - 另外，如果我想取得的資料，我沒辦法連線到那個資料庫，那怎麼辦？
 - 所以API是一個機制，讓APP、網站可以藉由API去取得資料，再由API去資料庫取得資料，那麼APP或網站就不需要知道資料庫連線的帳號密碼，一樣可以取得資料了
 
-![使用API取得資料](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/api.png?raw=true)
+![使用API取得資料](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/api.jpg?raw=true)
 
 ## API概述
 
