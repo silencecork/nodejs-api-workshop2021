@@ -18,6 +18,10 @@
   - [建立可以接收參數的GET API](#%E5%BB%BA%E7%AB%8B%E5%8F%AF%E4%BB%A5%E6%8E%A5%E6%94%B6%E5%8F%83%E6%95%B8%E7%9A%84get-api)
     - [第一步、撰寫程式碼](#%E7%AC%AC%E4%B8%80%E6%AD%A5%E6%92%B0%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%A2%BC-1)
     - [第二步、測試API](#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E6%B8%AC%E8%A9%A6api)
+- [整合範例](#%E6%95%B4%E5%90%88%E7%AF%84%E4%BE%8B)
+  - [第一步、撰寫程式碼](#%E7%AC%AC%E4%B8%80%E6%AD%A5%E6%92%B0%E5%AF%AB%E7%A8%8B%E5%BC%8F%E7%A2%BC-2)
+  - [第二步、測試API](#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E6%B8%AC%E8%A9%A6api-1)
+- [總結](#%E7%B8%BD%E7%B5%90)
 
 # 呼叫API
 
@@ -313,8 +317,8 @@
   const request = require('request');
   
   var options = {
-    'method': 'GET',
-    'url': 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json'
+    method: 'GET',
+    url: 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json'
   };
   request(options, function (err, response, body) {
     if (err) {
@@ -616,6 +620,176 @@
     let key2 = httpRequest.query.key2;
     ```
 
+- 使用指令```node server.js```啟動
+
 ### 第二步、測試API
 
 - 打開[hoppscotch](https://hoppscotch.io/)，在網址列輸入[http://localhost:8080/param?key1=SHU&key2=Workshop](http://localhost:8080/param?key1=SHU&key2=Workshop)，並按下Send，就可以看到結果了
+
+# 整合範例
+
+- 建立一個API，整合第一個YouBike的範例，將這個API打造成能夠由帶到API的參數，回傳只大於參數值的場站列表
+
+- 這是用戶呼叫你建立的API，而你的API再去呼叫YouBike的API，再由你的API處理資料後，回傳必要的資訊
+
+  ![範例圖示](https://github.com/silencecork/nodejs-api-workshop2021/blob/master/img/call_api_flow.jpg?raw=true)
+
+- API預定樣式[http://localhost:8080/ubike?bike_num=3](http://localhost:8080/ubike?bike_num=3)
+
+  - 路徑：/ubike
+  - 參數：bike_num
+  - 方法：GET
+
+## 第一步、撰寫程式碼
+
+- 這次建立一個新的檔案ubike_api.js
+
+- 以下是完整的程式碼：
+
+  ```javascript
+  const express = require('express');
+  const app = express();
+  const request = require('request');
+  const cors = require('cors');
+  
+  app.use(cors());
+  
+  app.get('/ubike', function (httpRequest, httpResponse) {
+      let count = httpRequest.query.bike_num;
+  
+      let options = {
+          url: 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json',
+          method: 'GET'
+      }
+  
+      request(options, function (err, response, body) {
+          if (err) {
+              console.error(err);
+              return httpResponse.json({
+                  'message': 'Error'
+              });
+          }
+  
+          let data = JSON.parse(body);
+          let matchResult = [];
+          data.forEach(function (item) {
+              if (item.sbi > count) {
+                  matchResult.push(item.sna);
+              }
+          });
+  
+          return httpResponse.json(matchResult);
+      });
+  });
+  
+  app.listen(8000, function (err) {
+      if (err) {
+          console.error(err);
+      }
+  });
+  ```
+
+- 程式碼說明：
+
+  - 首先這次的範例啟動在**8000** Port
+
+    ```javascript
+    app.listen(8000, function (err) {
+        if (err) {
+            console.error(err);
+        }
+    });
+    ```
+
+  - 接下來看向API，建立路徑/ubike的接收器
+
+    ```javascript
+    app.get('/ubike', function (httpRequest, httpResponse) {
+        ...
+    });
+    ```
+
+  - 在接收器的回呼函式內，接收呼叫API時傳上的參數bike_num，將數值存在變數count內
+
+    ```javascript
+    let count = httpRequest.query.bike_num;
+    ```
+
+  - 接下來建立request所要用來呼叫API的資訊 (這個如果忘記，記得回頭看[呼叫API](#%E5%91%BC%E5%8F%ABapi-1)的章節)
+
+    ```javascript
+    let options = {
+        url: 'https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json',
+        method: 'GET'
+    }
+    ```
+
+  - 緊接著使用request來呼叫API，並處理錯誤發生時的狀況
+
+    ```javascript
+    request(options, function (err, response, body) {
+        if (err) {
+            console.error(err);
+            return httpResponse.json({
+                'message': 'Error'
+            });
+        }
+        ...
+    });
+    ```
+
+  - 再來處理正常的情況，將回傳的資料轉換成物件/陣列
+
+    ```javascript
+    request(options, function (err, response, body) {
+        ...
+        let data = JSON.parse(body);
+        ...
+    });
+    ```
+
+  -  接下來執行data的迴圈，從迴圈值中找到sbi(場站目前車輛數量)大於變數count的物件，並將符合條件的物件的sna(場站中文名稱)使用Javascript的陣列操作方法```push()```存在matchResult中
+
+    ```javascript
+    request(options, function (err, response, body) {
+        ...
+        let matchResult = [];
+        data.forEach(function (item) {
+            if (item.sbi > count) {
+                matchResult.push(item.sna);
+            }
+        });
+        ...
+    });
+    ```
+
+  - 最後，使用```httpResponse.json()```回傳資料給用戶
+
+    ```javascript
+    request(options, function (err, response, body) {
+        ...
+        return httpResponse.json(matchResult);
+    });
+    ```
+
+- 接下來使用指令```node ubike_api.js```啟動
+
+## 第二步、測試API
+
+- 打開[hoppscotch](https://hoppscotch.io/)，在網址列輸入[http://localhost:8000/ubike?bike_num=10](http://localhost:8000/ubike?bike_num=10)，並按下Send，就可以看到結果，應該類似下方	
+
+  ```bash
+  [
+    "YouBike2.0_興雅松仁路口",
+    "YouBike2.0_臺大大一女舍北側"
+  ]
+  ```
+
+# 總結
+
+- 為什麼要使用API？
+- Node.js常用的相關指令
+- request套件的使用方式
+- express套件的使用方式
+- CORS的問題及解決方法
+- 兩者如何整合
